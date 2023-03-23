@@ -1,7 +1,6 @@
 import urllib.request
 import sys
 from unicodedata import category
-from collections import Counter
 
 
 def open_file():
@@ -74,21 +73,25 @@ def strip_stopwords(file):
 
 new_book = strip_stopwords(new_book)
 
-def common_words(file):
-    # common = {}
-    word_counts = Counter(file)
-    word_freq_pairs = sorted(word_counts.items(), key=lambda pair:pair[1],reverse=True)
-    # for word in file:
-    #     freq = file[word]
-    #     common.append(freq, word)
-    # common.sort(reverse=True)
-    # return common
-    return word_freq_pairs
-
-print(type(common_words(new_book)))
+def most_common_words(file):
+    common = {}
+    for word in file:
+        common[word] = common.get(word, 0)+1
+    res = []
+    for word in common:
+        freq = common[word]
+        res.append((freq,word))
+    res.sort(reverse=True)
+    return res[:10]
 
 
+print(most_common_words(new_book))
 
+def main():
+    pass
+
+if __name__ == '__main__':
+    main()
 
 
 
