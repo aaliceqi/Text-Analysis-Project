@@ -1,6 +1,8 @@
 import urllib.request
 import sys
 from unicodedata import category
+import nltk
+from nltk.stem import WordNetLemmatizer
 import pprint
 
 def replace_space(file):
@@ -28,6 +30,17 @@ def strip_gutenberg_header(file):
 
     return book_update
 
+def presentvalue(file):
+    #this function removes the tense of each word and turns it into present tense
+    lemmatizer = WordNetLemmatizer()
+
+    for i in range(len(file)):
+        base_form = lemmatizer.lemmatize(file[i], pos='v')
+        present_form = lemmatizer.lemmatize(base_form, pos = 'v')
+        file[i] = present_form
+
+    return file
+
 
 
 def strip_stopwords(file):
@@ -49,8 +62,6 @@ def strip_stopwords(file):
         [chr(i) for i in range(sys.maxunicode) if category(chr(i)).startswith("P")]
     )
 
-    # if strip_header:
-    #     strip_gutenberg_header(file)
 
     #put context of book file into a new string
     book = ""
@@ -63,12 +74,12 @@ def strip_stopwords(file):
     # turn string into list & remove strippables
     text_list = text_strip.split()
     text_list = ["".join([c for c in word if c not in strippables]) for word in text_list]
+    text_list_tense = presentvalue(text_list)
     
     #return only words that are not in stopwords list
-    text_list = [word for word in text_list if word not in stopwords_list]
+    text_list = [word for word in text_list_tense if word not in stopwords_list]
 
     return text_list
-
 
 
 def most_common_words(file, num):
@@ -82,19 +93,18 @@ def most_common_words(file, num):
     res.sort(reverse=True)
     return res[:num]
 
-
-
-
 def main():
     #can change this url to book of choice from the gutenberg database
     url = 'https://www.gutenberg.org/cache/epub/398/pg398.txt' #Adam & Eve Bible
-    # 'https://www.gutenberg.org/cache/epub/46/pg46.txt' The Christmas Carol
+    # 'https://www.gutenberg.org/cache/epub/46/pg46.txt' #The Christmas Carol
+    
     # 'https://www.gutenberg.org/files/1400/1400-0.txt' Great Expectations
     with urllib.request.urlopen(url) as f:
         text = f.read().decode('utf-8')
     strip_header = strip_gutenberg_header(text)
     stripped_text = strip_stopwords(strip_header)
-    number_of_most_frequent_words = 20
+    
+    number_of_most_frequent_words = 15
     pprint.pprint(most_common_words(stripped_text, number_of_most_frequent_words))
    
 
