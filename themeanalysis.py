@@ -16,8 +16,12 @@ def replace_space(file):
 
 def strip_gutenberg_header(file):
     #find unwanted texts ends and beginnings
-    unwanted_text1 = "CONTENTS"  #words you want to remove before this word 
-    unwanted_text2 = "*** END OF THIS PROJECT" #words you want to remove after this word and word
+    #if analyzing Christmas Carol or Adam and Eve: "CONTENTS"
+    #if analyzing Great Expectations: "Contents"
+    unwanted_text1 =  "Contents"  #words you want to remove before this word
+    #if analyzing Christmas Carol or Great Expectations: "*** END OF THE PROJECT"
+    #if analyzing Adam and Eve: "*** END OF THIS PROJECT"
+    unwanted_text2 = "*** END OF THE PROJECT" #words you want to remove after this word and word
 
     #remove gutenburg headers and endings
     start_pos = file.find(unwanted_text1)
@@ -95,18 +99,21 @@ def most_common_words(file, num):
 
 def main():
     #can change this url to book of choice from the gutenberg database
-    url = 'https://www.gutenberg.org/cache/epub/398/pg398.txt' #Adam & Eve Bible
-    # 'https://www.gutenberg.org/cache/epub/46/pg46.txt' #The Christmas Carol
+    url = 'https://www.gutenberg.org/files/1400/1400-0.txt'
+    #  'https://www.gutenberg.org/cache/epub/46/pg46.txt'#The Christmas Carol
+    #   #Great Expectations
+    #  'https://www.gutenberg.org/cache/epub/398/pg398.txt'#Adam & Eve Bible
     
-    # 'https://www.gutenberg.org/files/1400/1400-0.txt' Great Expectations
     with urllib.request.urlopen(url) as f:
         text = f.read().decode('utf-8')
     strip_header = strip_gutenberg_header(text)
     stripped_text = strip_stopwords(strip_header)
     
     number_of_most_frequent_words = 15
-    pprint.pprint(most_common_words(stripped_text, number_of_most_frequent_words))
-   
+    thewords = most_common_words(stripped_text,number_of_most_frequent_words)
+    for i, (_, word) in enumerate(thewords, 1):
+        print(f"{i}. {word}")
+    
 
 
 if __name__ == '__main__':

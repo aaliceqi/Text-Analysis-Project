@@ -173,6 +173,5 @@ yours
 yourself
 yourselves
 chapter
-us
-say
 said
+say
